@@ -6,8 +6,8 @@ beforeAll(() => seed(data));
 afterAll(() => db.end());
 
 describe('seed', () => {
-  describe('topics table', () => {
-    test('topics table exists', () => {
+  describe.only('topics table', () => {
+    test.only('topics table exists', () => {
       return db
         .query(
           `SELECT EXISTS (
@@ -22,7 +22,7 @@ describe('seed', () => {
         });
     });
 
-    test('topics table has slug column as varying character', () => {
+    test.only('topics table has slug column as varying character', () => {
       return db
         .query(
           `SELECT *
@@ -36,7 +36,7 @@ describe('seed', () => {
         });
     });
 
-    test('topics table has slug column as the primary key', () => {
+    test.only('topics table has slug column as the primary key', () => {
       return db
         .query(
           `SELECT column_name
@@ -51,7 +51,7 @@ describe('seed', () => {
         });
     });
 
-    test('topics table has description column as varying character', () => {
+    test.only('topics table has description column as varying character', () => {
       return db
         .query(
           `SELECT column_name, data_type, column_default
@@ -65,7 +65,7 @@ describe('seed', () => {
         });
     });
 
-    test('topics table has img_url column of varying character of max length 1000', () => {
+    test.only('topics table has img_url column of varying character of max length 1000', () => {
       return db
         .query(
           `SELECT column_name, data_type, character_maximum_length
@@ -81,7 +81,7 @@ describe('seed', () => {
     });
   });
 
-  describe('users table', () => {
+  describe.only('users table', () => {
     test('users table exists', () => {
       return db
         .query(
@@ -155,7 +155,7 @@ describe('seed', () => {
     });
   });
 
-  describe('articles table', () => {
+  describe.only('articles table', () => {
     test('articles table exists', () => {
       return db
         .query(
@@ -363,7 +363,7 @@ describe('seed', () => {
     });
   });
 
-  describe('comments table', () => {
+  describe.only('comments table', () => {
     test('comments table exists', () => {
       return db
         .query(
@@ -543,9 +543,9 @@ describe('seed', () => {
   });
 });
 
-describe('data insertion', () => {
+describe.only('data insertion', () => {
 
-  test('topics data has been inserted correctly', () => {
+  test.only('topics data has been inserted correctly', () => {
     return db.query(`SELECT * FROM topics;`).then(({ rows: topics }) => {
       expect(topics).toHaveLength(3);
       topics.forEach((topic) => {
@@ -556,7 +556,7 @@ describe('data insertion', () => {
     });
   });
 
-  test('users data has been inserted correctly', () => {
+  test.only('users data has been inserted correctly', () => {
     return db.query(`SELECT * FROM users;`).then(({ rows: users }) => {
       expect(users).toHaveLength(4);
       users.forEach((user) => {
