@@ -84,6 +84,17 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       author VARCHAR(500) REFERENCES users(username),
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )`)
+      .then(() => {
+        const formattedComments = commentData.map((comment) => {
+          const convertedComment = convertTimestampToDate(comment)
+          return [comment.body, comment.votes, comment.author, convertedComment.created_at]
+        })
+        const insertCommentQuery = format(
+          `INSERT INTO comments(body, votes, author, created_at) VALUES %L`,
+          formattedComments
+        );
+        return db.query(insertCommentQuery)
+      })
   })
 };
 
