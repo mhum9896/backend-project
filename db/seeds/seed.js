@@ -1,7 +1,9 @@
 const db = require("../connection")
 const format = require("pg-format");
 const articles = require("../data/test-data/articles")
-const convertTimestampToDate = require("./utils");
+
+
+const {convertTimestampToDate} = require("./utils")
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
   return db
@@ -61,17 +63,17 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       votes INT DEFAULT 0,
       article_img_url VARCHAR(1000)
       )`)
-      // .then(() => {
-      //   const formattedArticles = articleData.map((articles) => {
-      //     const convertedArticles = convertTimestampToDate(articles)
-      //     return [articles.title, articles.topic, articles.author, articles.body, convertedArticles.created_at, articles.votes, articles.article_img_url]
-      //   })
-      //   const insertArticlesQuery = format(
-      //     `INSERT INTO articles(title, topic, author, body, created_at, votes, article_img_url) VALUES %L`,
-      //     formattedArticles
-      //   );
-      //   return db.query(insertArticlesQuery)
-      // })
+      .then(() => {
+        const formattedArticles = articleData.map((article) => {
+          const convertedArticle = convertTimestampToDate(article)
+          return [article.title, article.topic, article.author, article.body, convertedArticle.created_at, article.votes, article.article_img_url]
+        })
+        const insertArticlesQuery = format(
+          `INSERT INTO articles(title, topic, author, body, created_at, votes, article_img_url) VALUES %L`,
+          formattedArticles
+        );
+        return db.query(insertArticlesQuery)
+      })
   })
   .then(() => {
     return db.query(`CREATE TABLE comments(
