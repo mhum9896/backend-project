@@ -4,6 +4,8 @@ const articles = require("../data/test-data/articles")
 
 
 const {convertTimestampToDate} = require("./utils")
+const {articleRef} = require("./utils");
+const comments = require("../data/test-data/comments");
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
   return db
@@ -69,7 +71,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
           return [article.title, article.topic, article.author, article.body, convertedArticle.created_at, article.votes, article.article_img_url]
         })
         const insertArticlesQuery = format(
-          `INSERT INTO articles(title, topic, author, body, created_at, votes, article_img_url) VALUES %L`,
+          `INSERT INTO articles(title, topic, author, body, created_at, votes, article_img_url) VALUES %L RETURNING *;`,
           formattedArticles
         );
         return db.query(insertArticlesQuery)
@@ -84,16 +86,23 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       author VARCHAR(500) REFERENCES users(username),
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )`)
-      .then(() => {
+      .then((result) => {
+        const articlesRefObj = articleRef(result.rows)
         const formattedComments = commentData.map((comment) => {
           const convertedComment = convertTimestampToDate(comment)
-          return [comment.body, comment.votes, comment.author, convertedComment.created_at]
+          return [articlesRefObj[comment.article_title],
+          comment.body,
+          comment.votes,
+          comment.author,
+          convertedComment.created_at]
         })
         const insertCommentQuery = format(
-          `INSERT INTO comments(body, votes, author, created_at) VALUES %L`,
+          `INSERT INTO comments(article_id, body, votes, author, created_at) VALUES %L`,
           formattedComments
         );
+
         return db.query(insertCommentQuery)
+        
       })
   })
 };

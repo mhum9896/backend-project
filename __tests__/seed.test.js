@@ -1,13 +1,14 @@
 const db = require('../db/connection');
 const seed = require('../db/seeds/seed');
 const data = require('../db/data/test-data/index');
+const { articleRef } = require('../db/seeds/utils');
 
 beforeAll(() => seed(data));
 afterAll(() => db.end());
 
 describe('seed', () => {
-  describe.only('topics table', () => {
-    test.only('topics table exists', () => {
+  describe('topics table', () => {
+    test('topics table exists', () => {
       return db
         .query(
           `SELECT EXISTS (
@@ -22,7 +23,7 @@ describe('seed', () => {
         });
     });
 
-    test.only('topics table has slug column as varying character', () => {
+    test('topics table has slug column as varying character', () => {
       return db
         .query(
           `SELECT *
@@ -36,7 +37,7 @@ describe('seed', () => {
         });
     });
 
-    test.only('topics table has slug column as the primary key', () => {
+    test('topics table has slug column as the primary key', () => {
       return db
         .query(
           `SELECT column_name
@@ -51,7 +52,7 @@ describe('seed', () => {
         });
     });
 
-    test.only('topics table has description column as varying character', () => {
+    test('topics table has description column as varying character', () => {
       return db
         .query(
           `SELECT column_name, data_type, column_default
@@ -65,7 +66,7 @@ describe('seed', () => {
         });
     });
 
-    test.only('topics table has img_url column of varying character of max length 1000', () => {
+    test('topics table has img_url column of varying character of max length 1000', () => {
       return db
         .query(
           `SELECT column_name, data_type, character_maximum_length
@@ -81,7 +82,7 @@ describe('seed', () => {
     });
   });
 
-  describe.only('users table', () => {
+  describe('users table', () => {
     test('users table exists', () => {
       return db
         .query(
@@ -155,7 +156,7 @@ describe('seed', () => {
     });
   });
 
-  describe.only('articles table', () => {
+  describe('articles table', () => {
     test('articles table exists', () => {
       return db
         .query(
@@ -363,7 +364,7 @@ describe('seed', () => {
     });
   });
 
-  describe.only('comments table', () => {
+  describe('comments table', () => {
     test('comments table exists', () => {
       return db
         .query(
@@ -543,9 +544,9 @@ describe('seed', () => {
   });
 });
 
-describe.only('data insertion', () => {
+describe('data insertion', () => {
 
-  test.only('topics data has been inserted correctly', () => {
+  test('topics data has been inserted correctly', () => {
     return db.query(`SELECT * FROM topics;`).then(({ rows: topics }) => {
       expect(topics).toHaveLength(3);
       topics.forEach((topic) => {
@@ -556,7 +557,7 @@ describe.only('data insertion', () => {
     });
   });
 
-  test.only('users data has been inserted correctly', () => {
+  test('users data has been inserted correctly', () => {
     return db.query(`SELECT * FROM users;`).then(({ rows: users }) => {
       expect(users).toHaveLength(4);
       users.forEach((user) => {
@@ -567,7 +568,7 @@ describe.only('data insertion', () => {
     });
   });
   
-  test.only('articles data has been inserted correctly', () => {
+  test('articles data has been inserted correctly', () => {
     return db.query(`SELECT * FROM articles;`).then(({ rows: articles }) => {
       expect(articles).toHaveLength(13);
       articles.forEach((article) => {
@@ -583,7 +584,7 @@ describe.only('data insertion', () => {
     });
   });
   
-  test.only('comments data has been inserted correctly', () => {
+  test('comments data has been inserted correctly', () => {
     return db.query(`SELECT * FROM comments;`).then(({ rows: comments }) => {
       expect(comments).toHaveLength(18);
       comments.forEach((comment) => {
@@ -598,4 +599,56 @@ describe.only('data insertion', () => {
   });
 });
 
-
+describe('reference to articles data', () => {
+  test(`returns empty object when passed empty array`, () => {
+    const input = []
+    const result = articleRef(input)
+    expect(result).toEqual({})
+  })
+  test(`when passed an array with a single object, returns an object with a single key and value`, () => {
+    const input = [{
+      article_id: 1,
+      title: "Living in the shadow of a great man",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "I find this existence challenging",
+      created_at: 1594329060000,
+      votes: 100,
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    }]
+    const result = articleRef(input)
+    expect(result).toEqual({
+      "Living in the shadow of a great man": 1
+    })
+  })
+  test(`when passed multiple objects within an array, return object with multiple keys and values`, () => {
+    const input = [{
+      article_id: 1,
+      title: "Living in the shadow of a great man",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "I find this existence challenging",
+      created_at: 1594329060000,
+      votes: 100,
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    },
+    {
+      article_id: 2,
+      title: "Sony Vaio; or, The Laptop",
+      topic: "mitch",
+      author: "icellusedkars",
+      body: "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to coding as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the laptop. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the the Vaio with me.",
+      created_at: 1602828180000,
+      votes: 0,
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    }]
+    const result = articleRef(input)
+    expect(result).toEqual({
+      "Living in the shadow of a great man": 1,
+      "Sony Vaio; or, The Laptop": 2
+    })
+  })
+})
