@@ -1,5 +1,7 @@
+const { articleData } = require("../db/data/test-data");
 const {
-  convertTimestampToDate
+  convertTimestampToDate,
+  articleRef
 } = require("../db/seeds/utils");
 
 describe("convertTimestampToDate", () => {
@@ -38,3 +40,55 @@ describe("convertTimestampToDate", () => {
   });
 });
 
+describe("articleRef", () => {
+  test("should return empty object when passed empty array", () => {
+    const input = []
+    const result = articleRef(input)
+    expect(result).toEqual({})
+  })
+  test('should return an object containing single key and value when passed an array of length 1', () => {
+    const input = [{
+      article_id: 1,
+      title: 'Living in the shadow of a great man',
+      topic: 'mitch',
+      author: 'butter_bridge',
+      body: 'I find this existence challenging',
+      created_at: '2020-07-09T20:11:00.000Z',
+      votes: 100,
+      article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+    }]
+    const result = articleRef(input)
+    expect(result).toEqual({
+      'Living in the shadow of a great man': 1
+    })
+  })
+  test('should return a lookup object with multiple keys and values when passed an array of multiple article objects', () => {
+    const input = [
+      {
+        article_id: 10,
+        title: 'Seven inspirational thought leaders from Manchester UK',
+        topic: 'mitch',
+        author: 'rogersop',
+        body: "Who are we kidding, there is only one, and it's Mitch!",
+        created_at: '2020-05-14T04:15:00.000Z',
+        votes: 0,
+        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+      },
+      {
+        article_id: 11,
+        title: 'Am I a cat?',
+        topic: 'mitch',
+        author: 'icellusedkars',
+        body: 'Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?',
+        created_at: '2020-01-15T22:21:00.000Z',
+        votes: 0,
+        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+      }
+    ]
+    const result = articleRef(input)
+    expect(result).toEqual({
+      'Seven inspirational thought leaders from Manchester UK': 10,
+      'Am I a cat?': 11
+    })
+  })
+})

@@ -9,11 +9,10 @@ exports.articleRef = (articlesData) => {
   if (articlesData.length === 0) {
     return {};
   }
-  const result = {}
-
-  articlesData.forEach((article) => {
-    result[article.title] = article.article_id
-   
-  });
-  return result
-}
+    let refObj = {};
+    articlesData.forEach((article) => {
+      refObj[article.title] = article.article_id
+    })
+    refObj[articlesData[0].title] = articlesData[0].article_id
+    return refObj
+  }
