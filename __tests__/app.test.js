@@ -25,3 +25,20 @@ describe("GET /api", () => {
   });
 });
 
+describe("GET /api/topics", () => {
+  test("200: Responds with an array of topic objects, each with a slug and a description", () => {
+    return request(app)
+    .get("/api/topics")
+    .expect(200)
+    .then(({body}) => {
+      console.log(body)
+      expect(body.topics.length).toBe(3)
+      body.topics.forEach((topic) => {
+        expect(topic).toMatchObject({
+          description: expect.any(String),
+          slug: expect.any(String),
+        })
+      })
+    })
+  })
+})
