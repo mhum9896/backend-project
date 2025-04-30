@@ -1,4 +1,4 @@
-const { selectArticleById } = require("../models/articles.model")
+const { selectArticleById, selectArticlesSorted } = require("../models/articles.model")
 
 
 exports.getArticleById = (req, res, next) => {
@@ -11,4 +11,14 @@ exports.getArticleById = (req, res, next) => {
         next(err)
     })
 
+}
+
+exports.getArticlesSorted = (req, res) => {
+    return selectArticlesSorted()
+    .then((articles) => {
+        res.status(200).send({articles})
+    })
+    .catch((err) => {
+        next(err)
+    })
 }

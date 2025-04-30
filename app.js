@@ -3,12 +3,10 @@ const app = express()
 const db = require("./db/connection")
 const endpoints = require("./endpoints.json")
 const { getTopics } = require("./app/controllers/topics.controller")
-const { getArticleById } = require("./app/controllers/articles.controller")
+const { getArticleById, getArticlesSorted } = require("./app/controllers/articles.controller")
 
 
 app.use(express.json())
-
-
 
 app.get("/api", (req, res) => {
     res.status(200).send({endpoints})
@@ -17,6 +15,8 @@ app.get("/api", (req, res) => {
 app.get("/api/topics", getTopics)
 
 app.get("/api/articles/:article_id", getArticleById)
+
+app.get("/api/articles", getArticlesSorted)
 
 
 app.use((err, req, res, next) => {

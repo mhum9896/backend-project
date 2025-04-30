@@ -4,6 +4,7 @@ const seed = require("../db/seeds/seed")
 const data = require("../db/data/test-data")
 const request = require("supertest")
 const app = require("../app")
+const sorted = require("jest-sorted")
 
 beforeEach(() => {
   return seed(data)
@@ -13,6 +14,7 @@ afterAll(() => {
   return db.end()
 })
 
+//describe("GET /api/badEndpoint")
 
 describe("GET /api", () => {
   test("200: Responds with an object detailing the documentation for each endpoint", () => {
@@ -80,3 +82,35 @@ describe("GET /api/articles/:article_id", () => {
     })
   })
 })
+
+describe("GET /api/articles", () => {
+  test("200: Responds with an array of article objects with correct properties", () => {
+    return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles.length).toBe(13)
+      body.articles.forEach((article) => {
+        expect(article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(String)
+        })
+      })
+    })
+  })
+  test("200: Responds with array or article objects sorted by date in descending order", () => {
+    return request(app)
+    .get("/api/articles?sort_by=created_at")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles).toBeSortedBy("created_at", {descending: true})
+    })
+  })
+})
+
