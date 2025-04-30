@@ -20,7 +20,6 @@ exports.selectArticlesSorted = () => {
     GROUP BY articles.article_id, articles.author, articles.title, articles.topic, articles.created_at, articles.votes, articles.article_img_url
     ORDER BY articles.created_at DESC`)
     .then((result) => {
-        console.log(result.rows)
         return result.rows
     })
 }
