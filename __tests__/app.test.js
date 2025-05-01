@@ -4,7 +4,6 @@ const seed = require("../db/seeds/seed")
 const data = require("../db/data/test-data")
 const request = require("supertest")
 const app = require("../app")
-const sorted = require("jest-sorted")
 
 beforeEach(() => {
   return seed(data)
@@ -114,3 +113,55 @@ describe("GET /api/articles", () => {
   })
 })
 
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: Responds with all comments from specicied article id", () => {
+    return request(app)
+    .get("/api/articles/3/comments")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.comments.length).toBe(2)
+      body.comments.forEach((comment) => {
+        expect(comment).toMatchObject({
+          comment_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          article_id: expect.any(Number)
+        })
+      })
+    })
+  })
+  test("200: Responds with an array of comments from specified article_id sorted by date with most recent comment first", () => {
+    return request(app)
+    .get("/api/articles/3/comments?sort_by=created_at")
+    .expect(200)
+      .then(({body}) => {
+        expect(body.comments).toBeSortedBy("created_at", {descending: true})
+      })
+    })
+  test("400: Bad Request if article_id is not a number", () => {
+    return request(app)
+    .get("/api/articles/potato")
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe("Bad Request")
+    })
+  })
+  test("404: Not Found if article_id is out of range", () => {
+    return request(app)
+    .get("/api/articles/1000")
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe("Not Found")
+    })
+  })
+  test("200: Responds with empty array if no comments available for specified article", () => {
+    return request(app)
+    .get("/api/articles/2/comments")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.comments).toEqual([])
+    })
+  })
+})
