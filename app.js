@@ -4,7 +4,7 @@ const db = require("./db/connection")
 const endpoints = require("./endpoints.json")
 const { getTopics } = require("./app/controllers/topics.controller")
 const { getArticleById, getArticlesSorted } = require("./app/controllers/articles.controller")
-const { getCommentsUsingArticleId } = require("./app/controllers/comments.controller")
+const { getCommentsUsingArticleId, postCommentByArticleId } = require("./app/controllers/comments.controller")
 
 app.use(express.json())
 
@@ -20,6 +20,8 @@ app.get("/api/articles", getArticlesSorted)
 
 app.get("/api/articles/:article_id/comments", getCommentsUsingArticleId)
 
+app.post("/api/articles/:article_id/comments", postCommentByArticleId)
+
 
 app.use((err, req, res, next) => {
     if (err.status && err.msg) {
@@ -34,7 +36,6 @@ app.use((err, req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
-    console.log(err)
     res.status(500).send({msg: "Internal Server Error"})
 })
 
