@@ -142,7 +142,7 @@ describe("GET /api/articles/:article_id/comments", () => {
     })
   test("400: Bad Request if article_id is not a number", () => {
     return request(app)
-    .get("/api/articles/potato")
+    .get("/api/articles/potato/comments")
     .expect(400)
     .then(({body}) => {
       expect(body.msg).toBe("Bad Request")
@@ -150,7 +150,7 @@ describe("GET /api/articles/:article_id/comments", () => {
   })
   test("404: Not Found if article_id is out of range", () => {
     return request(app)
-    .get("/api/articles/1000")
+    .get("/api/articles/1000/comments")
     .expect(404)
     .then(({body}) => {
       expect(body.msg).toBe("Not Found")
@@ -162,6 +162,69 @@ describe("GET /api/articles/:article_id/comments", () => {
     .expect(200)
     .then(({body}) => {
       expect(body.comments).toEqual([])
+    })
+  })
+})
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("200: Responds with comment added to specified article", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "new comment"
+    }
+    return request(app)
+    .post("/api/articles/1/comments")
+    .send(
+      newComment)
+    .expect(200)
+    .then(({body}) => {
+      expect(body.newComment).toMatchObject({
+        author: "butter_bridge",
+        body: "new comment",
+        created_at: expect.any(String),
+        votes: 0,
+        article_id: 1,
+        comment_id: expect.any(Number)
+      })
+    })
+  })
+  test("404: Responds with not found if author isn't valid", () => {
+    const newComment = {
+      username: "Dave",
+      body: "new comment"
+    }
+    return request(app)
+    .post("/api/articles/1/comments")
+    .send(newComment)
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe("Not Found")
+    })
+  })
+  test("404: Responds with Not Found when posting to article out of range", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "new comment"
+    }
+    return request(app)
+    .post("/api/articles/1000/comments")
+    .send(newComment)
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe("Not Found")
+    })
+  })
+  test("400: Responds with Bad Request when posting with missing fields", () => {
+    const newComment = {
+      username: "",
+      body: ""
+    }
+    return request(app)
+    .post("/api/articles/1/comments")
+    .send(newComment)
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe("Bad Request")
     })
   })
 })
