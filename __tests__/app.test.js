@@ -241,3 +241,52 @@ describe("POST /api/articles/:article_id/comments", () => {
     })
   })
 })
+
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("200: Responds with updated article with incremented votesfor specified article", () => {
+    return request(app)
+    .patch("/api/articles/3")
+    .send({ inc_votes: 1 })
+    .expect(200)
+    .then(({body}) => {
+      expect(body.article).toMatchObject({
+        article_id: 3,
+        title: expect.any(String),
+        topic: expect.any(String),
+        author: expect.any(String),
+        body: expect.any(String),
+        created_at: expect.any(String),
+        votes: 1,
+        article_img_url: expect.any(String)
+      })
+    })
+  })
+  test("404: Responds with Not Found if article is out of range", () => {
+    return request(app)
+    .patch("/api/articles/79")
+    .send({ inc_votes: 1 })
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe("Not Found")
+    })
+  })
+  test("400: Responds with Bad Request if passed using invalid article id", () => {
+    return request(app)
+    .patch("/api/articles/potato")
+    .send({ inc_votes: 1 })
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe("Bad Request")
+    })
+  })
+  test("400: Responds with Bad Request if given invalid number", () => {
+    return request(app)
+    .patch("/api/articles/1")
+    .send({ inc_votes: "X" })
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe("Bad Request")
+    })
+  })
+})
