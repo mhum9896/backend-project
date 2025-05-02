@@ -290,3 +290,27 @@ describe("PATCH /api/articles/:article_id", () => {
     })
   })
 })
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: Responds with no content for given comment id", () => {
+    return request(app)
+    .delete("/api/comments/2")
+    .expect(204)
+  })
+  test("400: Responds with Bad Request if given invalid comment id", () => {
+    return request(app)
+    .delete("/api/comments/potato")
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe("Bad Request")
+    })
+  })
+  test("404: Responds with Not Found if given comment id that is out of range", () => {
+    return request(app)
+    .delete("/api/comments/3000")
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe("Not Found")
+    })
+  })
+})

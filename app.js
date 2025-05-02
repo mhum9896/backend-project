@@ -4,7 +4,7 @@ const db = require("./db/connection")
 const endpoints = require("./endpoints.json")
 const { getTopics } = require("./app/controllers/topics.controller")
 const { getArticleById, getArticlesSorted, patchArticle } = require("./app/controllers/articles.controller")
-const { getCommentsUsingArticleId, postCommentByArticleId } = require("./app/controllers/comments.controller")
+const { getCommentsUsingArticleId, postCommentByArticleId, deleteCommentById } = require("./app/controllers/comments.controller")
 
 app.use(express.json())
 
@@ -24,6 +24,12 @@ app.post("/api/articles/:article_id/comments", postCommentByArticleId)
 
 app.patch("/api/articles/:article_id", patchArticle)
 
+app.delete("/api/comments/:comment_id", deleteCommentById)
+
+
+app.all('/*splat', (req, res) => {
+    res.status(404).send( {msg: "Not Found"})
+})
 
 app.use((err, req, res, next) => {
     if (err.status && err.msg) {
