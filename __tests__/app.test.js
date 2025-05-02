@@ -227,4 +227,17 @@ describe("POST /api/articles/:article_id/comments", () => {
       expect(body.msg).toBe("Bad Request")
     })
   })
+  test("400: Responds with Bad Request if posted using invalid article id", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "new comment"
+    }
+    return request(app)
+    .post("/api/articles/potato/comments")
+    .send(newComment)
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe("Bad Request")
+    })
+  })
 })
