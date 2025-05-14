@@ -5,6 +5,7 @@ const endpoints = require("./endpoints.json")
 const { getTopics } = require("./app/controllers/topics.controller")
 const { getArticleById, getArticlesSorted, patchArticle } = require("./app/controllers/articles.controller")
 const { getCommentsUsingArticleId, postCommentByArticleId, deleteCommentById } = require("./app/controllers/comments.controller")
+const { getUsers } = require("./app/controllers/users.controller")
 
 app.use(express.json())
 
@@ -25,6 +26,8 @@ app.post("/api/articles/:article_id/comments", postCommentByArticleId)
 app.patch("/api/articles/:article_id", patchArticle)
 
 app.delete("/api/comments/:comment_id", deleteCommentById)
+
+app.get("/api/users", getUsers)
 
 
 app.all('/*splat', (req, res) => {
