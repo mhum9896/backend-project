@@ -333,8 +333,69 @@ describe("GET /api/users", () => {
   })
 })
 
-xdescribe("GET /api/articles (sorting queries", () => {
-  test("200: responds with an array of articles sorted by desc created_at", () => {
-    
+describe("GET /api/articles (sorting queries)", () => {
+  test("200: responds with an array of articles sorted by created_at in descending order by default", () => {
+    return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles).toBeSortedBy("created_at", {descending: true})
+    })
+  })
+  test("200: responds with an array of articles sorted by created_at in ascending order", () => {
+    return request(app)
+    .get("/api/articles?sort_by=created_at&order=asc")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles).toBeSortedBy("created_at", {descending: false})
+    })
+  })
+  test("200: responds with an array of articles sorted by votes in descending order", () => {
+    return request(app)
+    .get("/api/articles?sort_by=votes")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles).toBeSortedBy("votes", {descending: true})
+    })
+  })
+  test("200: responds with an array of articles sorted by votes in ascending order", () => {
+    return request(app)
+    .get("/api/articles?sort_by=votes&order=asc")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles).toBeSortedBy("votes", {descending: false})
+    })
+  })
+  test("200: responds with an array of articles sorted by title in descending order", () => {
+    return request(app)
+    .get("/api/articles?sort_by=title")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles).toBeSortedBy("title", {descending: true})
+    })
+  })
+  test("200: responds with an array of articles sorted by title in ascending order", () => {
+    return request(app)
+    .get("/api/articles?sort_by=title&order=asc")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles).toBeSortedBy("title", {descending: false})
+    })
+  })
+  test("400: responds with Bad Request when passed invalid query", () => {
+    return request(app)
+    .get("/api/articles?sort_by=potato")
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe("Bad Request")
+    })
+  })
+  test("400: responds with Bad Request when passed invalid order query", () => {
+    return request(app)
+    .get("/api/articles?sort_by=created_at&order=potato")
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe("Bad Request")
+    })
   })
 })
