@@ -14,9 +14,9 @@ exports.getArticleById = (req, res, next) => {
 }
 
 exports.getArticlesSorted = (req, res, next) => {
-    const {sort_by, order} = req.query
+    const {sort_by, order, topic} = req.query
 
-    return selectArticlesSorted(sort_by, order)
+    return selectArticlesSorted(sort_by, order, topic)
     .then((articles) => {
         res.status(200).send({articles})
     })

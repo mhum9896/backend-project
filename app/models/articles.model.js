@@ -11,38 +11,47 @@ exports.selectArticleById = (article_id) => {
     })
 }
 
-exports.selectArticlesSorted = (sort_by='created_at', order='desc') => {
+exports.selectArticlesSorted = (sort_by='created_at', order='desc', topic) => {
     
     let queryStr = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url,
     COUNT (comments.article_id) AS comment_count
     FROM articles
-    LEFT JOIN comments ON comments.article_id = articles.article_id
-    GROUP BY articles.article_id`
-
+    LEFT JOIN comments ON comments.article_id = articles.article_id`;
+  
+    const queryVals = []
+    
+    if (topic) {
+        queryStr += ` WHERE articles.topic = $1`;
+        queryVals.push(topic);
+    }
+    
+    queryStr += ` GROUP BY articles.article_id`;
+    
     const sortByGreenList = [
         "created_at",
         "votes",
         "title",
         "topic",
         "author"
-    ]
-    const orderGreenList = [
-        "asc",
-        "desc"
-    ]
+    ];
     
     if (sort_by && !sortByGreenList.includes(sort_by)) {
         return Promise.reject({status: 400, msg: "Bad Request"});
     }
-
+    
+    const orderGreenList = [
+        "asc",
+        "desc"
+    ];
+    
     if (order && !orderGreenList.includes(order)) {
         return Promise.reject({status: 400, msg: "Bad Request"});
     }
-
+    
     queryStr += ` ORDER BY articles.${sort_by} ${order}`;
 
      return db
-     .query(queryStr)
+     .query(queryStr, queryVals)
      .then((result) => {
         return result.rows
      })
