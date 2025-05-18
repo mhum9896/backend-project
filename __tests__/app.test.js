@@ -399,3 +399,34 @@ describe("GET /api/articles (sorting queries)", () => {
     })
   })
 })
+
+describe("GET /api/articles (topic query)", () => {
+  test("200: responds with an array of articles that have the passed topic", () => {
+    return request(app)
+    .get("/api/articles?topic=cats")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles.length).toBe(1)
+      body.articles.forEach((article) => {
+        expect(article).toMatchObject({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: 'cats',
+          author: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(String)
+        })
+      })
+    })
+  })
+  test("200: responds with an empty array of articles when passed a topic that no article has", () => {
+    return request(app)
+    .get("/api/articles?topic=paper")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles.length).toBe(0)
+    })
+  })
+})
