@@ -1,4 +1,4 @@
-Follow this link to access the hosted version: 
+Follow this link to access the hosted version: https://humadis-news.onrender.com
 
 Project Overview:
 This project is the backend for a news application.
