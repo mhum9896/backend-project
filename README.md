@@ -10,3 +10,6 @@ To run the repo locally:
 3) Run databases locally using 'npm run setup-dbs'
 
 Node.js v23.7.0 was used for this project
+
+This portfolio project was created as part of a Digital Skills Bootcamp in Software Engineering provided by Northcoders.
+More information about Northcoders can be found here: https://northcoders.com
